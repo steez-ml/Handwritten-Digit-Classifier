@@ -20,19 +20,19 @@ y_test = np.concatenate((y_test, y_train[:10000]))
 x_train = x_train[10000:]
 y_train = y_train[10000:]
 
-# Expand the last dimension for the augmentation layers
+# expand the last dimension for the augmentation layers
 x_train = np.expand_dims(x_train, -1)
 x_test = np.expand_dims(x_test, -1)
 
-# Create a tf.data.Dataset
+# create a tf.data.Dataset
 train_dataset = tf.data.Dataset.from_tensor_slices((x_train, y_train))
 
-# Define the augmentation
+# define the augmentation
 data_augmentation = tf.keras.Sequential([
     keras.layers.experimental.preprocessing.RandomTranslation(height_factor=.6, width_factor=.6)
 ])
 
-# Apply the augmentation only on 50% of the data
+# apply the augmentation only on 50% of the data
 augmented_train_dataset = train_dataset.map(lambda x, y: (data_augmentation(x, training=True), y))
 train_dataset = train_dataset.concatenate(augmented_train_dataset)
 train_dataset = train_dataset.shuffle(x_train.shape[0]*2)
@@ -52,7 +52,7 @@ train_dataset = train_dataset.batch(128).prefetch(tf.data.AUTOTUNE)
 # ])
 
 model = tf.keras.Sequential([
-    tf.keras.layers.Reshape((28, 28, 1), input_shape=(28, 28)),  # Reshape inputs to (28, 28, 1)
+    tf.keras.layers.Reshape((28, 28, 1), input_shape=(28, 28)),  # reshape inputs to (28, 28, 1)
     tf.keras.layers.Conv2D(32, kernel_size=(3, 3), activation=keras.layers.LeakyReLU()),  # 32 filters of size 3x3
     tf.keras.layers.BatchNormalization(),
     tf.keras.layers.Conv2D(64, kernel_size=(3, 3), activation=keras.layers.LeakyReLU()),  # 64 filters of size 3x3
